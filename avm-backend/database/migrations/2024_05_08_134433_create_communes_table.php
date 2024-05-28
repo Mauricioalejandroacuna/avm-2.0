@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('communes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('regions_id');
-            $table->foreign('regions_id')->references('id')->on('regions')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('regions_id')->references('id')->on('regions');
             $table->integer('code_commune');
             $table->string('name');
         });

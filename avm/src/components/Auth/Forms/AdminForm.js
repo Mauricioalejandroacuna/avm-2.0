@@ -67,7 +67,9 @@ export function AdminForm(){
                 name: decoded.name,
                 email: decoded.email,
                 sanctumToken: decoded.sanctumToken,
-                type: decoded.type
+                type: decoded.type,
+                supervisors: decoded.supervisors,
+                typeAssets: decoded.userTypes
             }
             await saveToken(res.access_token);
             await login(dataSession);

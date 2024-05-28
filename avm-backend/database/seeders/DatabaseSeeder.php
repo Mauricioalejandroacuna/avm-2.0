@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TypeAssetSeeder::class,
             FileTypesSeeder::class,
-            AccessCode::class
+            AccessCode::class,
+            RegionSeeder::class
         ]);
     }
 }

@@ -6,6 +6,8 @@ use App\Helpers\validateRut;
 use App\Http\Requests\LoginAdminPostRequest;
 use App\Http\Requests\LoginClientPostRequest;
 use App\Models\UserType;
+use App\Models\TypeAsset;
+use App\Models\User;
 use App\Services\AuthService;
 use Firebase\JWT\JWT;
 
@@ -26,11 +28,15 @@ class AuthController extends Controller
             $key = 'test666';
             $type = UserType::where('id', $request->user()->user_types_id)->first();
             $token = $request->user()->createToken($credentials['email'])->plainTextToken;
+            $supervisors = User::where('user_types_id', 2)->get();
+            $typeAsset = TypeAsset::get();
             $payload = [
                 'name' => $request->user()->name,
                 'email' => $request->user()->email,
                 'type' => $type['name'],
                 'sanctumToken' => $token,
+                'supervisors' => $supervisors,
+                'userTypes' => $typeAsset
             ];
             $jwt = JWT::encode($payload, $key, 'HS256');
             $data = ['success' => true, 'access_token' => $jwt];

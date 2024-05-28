@@ -18,6 +18,10 @@ class AccessCode extends Seeder
             [
                 'users_id' => 2,
                 'code' => Hash::make('qwerty123'),
+            ],
+            [
+                'users_id' => 3,
+                'code' => Hash::make('qwerty123'),
             ]
         ];
         DB::table('access_codes')->insert($data);

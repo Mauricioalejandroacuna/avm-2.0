@@ -73,4 +73,9 @@ class UserController extends Controller
         $res = $this->userService->deleteSupervisor($id);
         return response()->json($res);
     }
+
+    public function getSupervisors(Request $request){
+        $res = $this->userService->getSupervisors();
+        return response()->json($res);
+    }
 }

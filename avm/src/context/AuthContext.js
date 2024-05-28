@@ -20,14 +20,29 @@ const sessionType = {
         email: null,
         password: null,
         type: null
+    },
+    supervisors: {
+        id: null,
+        name: null
+    },
+    typeAsset: {
+        id: null,
+        name: null
     }
 }
 
 export const AuthProvider = (props) => {
     const [ session, setSession ] = React.useState(sessionType);
+    
     const login = (data) => {
         if(session.isLogged === false){
-            const { access_token, name, email, type, sanctumToken } = data;
+            const { access_token, name, email, type, sanctumToken, supervisors, typeAssets } = data;
+            const supervisorsOptions = supervisors.map((data) => {
+                return { value: data.id, label: data.name };
+            });
+            const typeAssetsOptions = typeAssets.map((data) => {
+                return { value: data.id, label: data.name };
+            });
             const dataSession = {
                 access_token,
                 isLogged: true,
@@ -36,7 +51,9 @@ export const AuthProvider = (props) => {
                     name,
                     email,
                     type
-                }
+                },
+                supervisorsOptions,
+                typeAssetsOptions
             }
             setSession(dataSession);
         }

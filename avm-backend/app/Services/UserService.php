@@ -152,4 +152,13 @@ class UserService
             return ['success' => false, 'message' => 'Error al eliminar usuario'];
         }
     }
+    public function getSupervisors(){
+        try {
+            $supervisors = User::where('user_types_id', 2)->get();
+            return [ 'success' => true, 'supervisors' => $supervisors ];
+        } catch (\Throwable $th) {
+            \Log::error($th->getMessage());
+            return [ 'success' => false, 'error' => 'Error al obtener datos' ];
+        }
+    }
 }

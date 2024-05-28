@@ -5,6 +5,7 @@ import {CreateAppreciationForm} from "../../../components/Forms/CreateAppreciati
 import {Footer} from "../../../components/Elements/Footer";
 
 export function CreateValoration() {
+
     return(
         <>
             <NavBar/>

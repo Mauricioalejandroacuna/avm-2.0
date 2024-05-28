@@ -38,6 +38,7 @@ Route::post('create-appreciation', [AppreciationController::class, 'createApprec
 // User
 Route::get('clients', [UserController::class, 'getClients'])->middleware('auth:sanctum');
 Route::post('search-client', [UserController::class, 'searchClient'])->middleware('auth:sanctum');
+Route::get('get-suppervisors', [UserController::class, 'getSupervisors'])->middleware('auth:sanctum');
 
 // Commune
 Route::post('search-commune', [CommuneController::class, 'searchCommune'])->middleware('auth:sanctum');

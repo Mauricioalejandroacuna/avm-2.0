@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { useForm } from 'react-hook-form';
 import '../../components/styles/FormStyles.css';
 import { Map } from "../Elements/Map";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import Select from "react-select";
 import { AutoCompleteInputMap } from "../Elements/AutoCompleteInputMap";
 import { searchCommune } from "../../services/commune";
@@ -13,21 +13,20 @@ import { searchClient } from "../../services/client";
 import {enqueueSnackbar} from "notistack";
 import {storeAppreciation} from "../../services/appreciation";
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../context/AuthContext';
 
 export function CreateAppreciationForm() {
+    const user = useAuthContext();
     const [ coordinates, setCoordinates ] = React.useState({});
     const [ communeSearch, setCommuneSearch ] = React.useState(null);
     const [ isLoading, setIsLoading ] = React.useState(false);
     const [ isDataRutSet, setIsDataRutSet ] = React.useState(true);
     const [ rutError, setRutError ] = React.useState('');
     const [ typeAssetError, setTypeAssetError ] = React.useState('');
+    const [ supervisorError, setSupervisorError ] = React.useState('');
     const [ addressError, setAddressError ] = React.useState('');
     const navigate = useNavigate();
-    const options = [
-        { value: 1, label: 'Casa' },
-        { value: 2, label: 'Departamento' },
-    ];
-
+    
     useEffect(() => {
         (async () => {
             if(communeSearch){
@@ -35,6 +34,7 @@ export function CreateAppreciationForm() {
             }
         })()
     }, [communeSearch])
+
     const getCommuneBack = async (search) => {
         const res = await searchCommune(search.trim());
         if(res.success === true){
@@ -63,11 +63,13 @@ export function CreateAppreciationForm() {
             terrainConstruction: "",
             bedroom: "",
             bathroom: "",
+            typeSupervisor: "",
             newClient: false,
         }
     })
     const onSubmit = async (data) => {
         setIsLoading(true);
+        console.log(data); return;
         const res = await storeAppreciation(data);
         if(res.success === true){
             enqueueSnackbar(res.message, {
@@ -142,6 +144,10 @@ export function CreateAppreciationForm() {
         if(!getValues('addressMap')){
             setAddressError('Direccion es requerida')
         }
+        if(!getValues('typeSupervisor')){
+            setSupervisorError('Tipo de supervisor es requerido')
+        }
+        
     }
     const handleClearError = () => {
         clearErrors();
@@ -279,7 +285,7 @@ export function CreateAppreciationForm() {
                         >
                             <Select
                                 placeholder="Tipo de bien"
-                                options={options}
+                                options={user.typeAssetsOptions}
                                 onChange={(e) => {
                                     setValue('typeOfAsset', e.value);
                                 }}
@@ -318,6 +324,18 @@ export function CreateAppreciationForm() {
                             { ...register("bathroom", { valueAsNumber: true, required: "Bano es requerido" }) }
                         />
                         {errors.bathroom && <p className="error-messages-table" role="alert" > { errors.bathroom.message } </p> }
+                        <div
+                            style={{ width: '350px', marginBottom: '10px', marginTop: '-2px' }}
+                        >
+                            <Select
+                                placeholder="Tipo de supervisor"
+                                options={user.supervisorsOptions}
+                                onChange={(e) => {
+                                    setValue('typeSupervisor', e.value);
+                                }}
+                            />
+                            {supervisorError && <p className="error-messages-table-type-of-asset" role="alert"> { supervisorError } </p>}
+                        </div>
                     </Grid>
                     <Grid item xs={8}>
                         <Map coordinates={coordinates} />
