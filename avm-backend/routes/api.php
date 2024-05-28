@@ -31,7 +31,7 @@ Route::delete('delete-supervisor/{id}', [UserController::class, 'deleteSuperviso
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // Appreciation
-Route::get('appreciations', [AppreciationController::class, 'getAppreciations'])->middleware('auth:sanctum');
+Route::get('appreciations', [AppreciationController::class, 'getAppreciationByAdmins'])->middleware('auth:sanctum');
 Route::get('appreciations-client', [AppreciationController::class, 'getAppreciationByClient'])->middleware('auth:sanctum');
 Route::post('create-appreciation', [AppreciationController::class, 'createAppreciation'])->middleware('auth:sanctum');
 

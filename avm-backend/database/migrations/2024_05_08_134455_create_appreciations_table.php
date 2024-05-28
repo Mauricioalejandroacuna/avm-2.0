@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('appreciations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('users_id');
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('client_id');
+            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('supervisor_id');
+            $table->foreign('supervisor_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('coordinator_id');
+            $table->foreign('coordinator_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('type_assets_id');
             $table->foreign('type_assets_id')->references('id')->on('type_assets');
             $table->unsignedBigInteger('access_code_id');

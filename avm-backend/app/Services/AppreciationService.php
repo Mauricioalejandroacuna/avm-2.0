@@ -21,8 +21,8 @@ class AppreciationService
     private MailService $mailService;
 
     public function __construct(
-        AccessCodeService $accessCodeService, 
-        ApiService $apiService,  
+        AccessCodeService $accessCodeService,
+        ApiService $apiService,
         CalculateService $calculateService,
         MailService $mailService
     )
@@ -33,9 +33,18 @@ class AppreciationService
         $this->mailService = $mailService;
     }
 
-    public function appreciations(){
+    public function getAppreciationByAdmin($request){
+
+        $adminType = $request->user()->user_types_id;
+        if($adminType === 1){
+            $type = 'coordinator_id';
+        } else if ($adminType === 2){
+            $type = 'supervisor_id';
+        } else if ($adminType === 3){
+            $type = 'client_id';
+        }
         try {
-            $appreciations = Appreciation::with('file')->get();
+            $appreciations = Appreciation::where($type, $request->user()->id)->with('file')->get();
             return [ 'success' => true, 'appreciations' => $appreciations];
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());
@@ -57,7 +66,7 @@ class AppreciationService
 
     public function createAppreciation($request){
         try {
-            if($request->data['newClient'] === true) {
+            if($appreciationData['newClient'] === true) {
                 $client = new User();
                 $client->name = $request->data['name'];
                 $client->rut = $request->data['rut'];
@@ -70,7 +79,8 @@ class AppreciationService
             }
             $this->accessCodeService->createAccessCode($client->id);
             $appreciation = new Appreciation();
-            $appreciation->users_id = $client->id;
+            $appreciation->client_id = $client->id;
+            $appreciation->coordinator_id = $request->user()->id;
             $appreciation->type_assets_id = $request->data['typeOfAsset'];
             $appreciation->access_code_id = 1;
             $appreciation->commune_id = $request->data['communeId'];
@@ -85,16 +95,18 @@ class AppreciationService
             $appreciation->longitude = $request->data['longitude'];
             $appreciation->status = true;
             $uf = $this->apiService->getUf(); // get uf
-            $value_uf_valoranet = $this->calculateService->calculateValueValoranet($request);
-            $value_uf_report = $this->calculateService->calculateValueWitnesses($request);
+            $value_uf_valoranet = $this->calculateService->calculateValueValoranet($appreciationData);
+            $value_uf_report = $this->calculateService->calculateValueWitnesses($appreciationData);
             $appreciation->value_uf_saved = $uf;
             $appreciation->value_uf_reference = $uf;
             $appreciation->value_uf_valoranet =  $value_uf_valoranet;
             $appreciation->value_uf_report =  $value_uf_report;
             $appreciation->quality = 10;
             $appreciation->save();
+            \Log::error($appreciation);
             $path = $client->id.'/appreciation'.$appreciation->id.'.xlsx';
-            //$excel = Excel::store(new AppreciationExport($appreciation), $path, 'files');
+            $excel = Excel::store(new AppreciationExport($appreciation), $path, 'files');
+            Mail::to('mauricio.acuna@valuaciones.cl')->send(new OrderShipped($appreciation, $path));
             $this->mailService->sendExcelCoordinator($appreciation->id);
             $file = new File;
             $file->appreciation_id = $appreciation->id;
@@ -102,16 +114,10 @@ class AppreciationService
             $file->file_type_id = 1;
             $file->path = $path;
             $file->save();
-            return [
-                'success' => true,
-                'message' => 'El sistema esta procesando la valoracion'
-            ];
+            return [ 'success' => true, 'message' => 'La valoracion esta siendo procesada' ];
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());
-            return [
-                'success' => false,
-                'error' => 'Error al crear valoraciones de cliente'
-            ];
+            return [ 'success' => false, 'message' => 'Error' ];
         }
     }
 }

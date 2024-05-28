@@ -79,7 +79,7 @@ export function CreateAppreciationForm() {
                 variant: "error"
             });
         }
-        //navigate('/appreciations');
+        navigate('/appreciations');
         setIsLoading(false);
     }
     const handleEnterKey = async () => {

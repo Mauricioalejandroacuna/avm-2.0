@@ -32,7 +32,7 @@ class MailService
 
             $rango_min_uf = round($rango_min_uf_temp);
             $rango_max_uf = round($rango_max_uf_temp);
-            
+
             list($rol_izq, $rol_der) = explode('-', $appreciation['rol']);
 
             \Log::error($appreciation->commune[0]->code_commune);
@@ -125,7 +125,6 @@ class MailService
                 'quality' => $query['quality'],
             ];
 
-            //Mail::to('mauricio.acuna@valuaciones.cl')->send(new OrderShipped($appreciation, $path));
             return $stored_sii;
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());

@@ -4,13 +4,13 @@ namespace App\Services;
 use App\Services\DBService;
 
 /**
- * In the calculate services, there are function 
+ * In the calculate services, there are function
  * to calculate data from APIS or DBs
  */
 
 class CalculateService
 {
-    
+
     private DBService $dbService;
 
     public function __construct(DBService $dbService)
@@ -18,26 +18,26 @@ class CalculateService
         $this->dbService = $dbService;
     }
 
-    public function calculateValueValoranet($request){
+    public function calculateValueValoranet($appreciationData){
         $currentDate = now('America/santiago')->format('d-m-Y');
         $currentDateValo = now('America/santiago')->format('Y-m-d');
         $getYear = substr($currentDateValo, 0, 4);
         $getRestDate = substr($currentDateValo, 4);
         $getYear -= 1;
         $dateYearsLess = $getYear . $getRestDate;
-        $latitude = $request->data['latitude'];
-        $longitude = $request->data['longitude'];
+        $latitude = $appreciationData['latitude'];
+        $longitude = $appreciationData['longitude'];
          // set type of asset
-         if ($request->data['typeOfAsset'] == 1) {
+         if ($appreciationData['typeOfAsset'] == 1) {
             $typeAsset = 'CASA';
             $typeAsset2 = 'VIVIENDA_UNIFAMILIAR';
-        } else if ($request->data['typeOfAsset'] == 2) {
+        } else if ($appreciationData['typeOfAsset'] == 2) {
             $typeAsset = 'DEPARTAMENTO';
             $typeAsset2 = 'DEPARTAMENTO';
         }
 
         // get the +-15% of variation in construction area
-        $baseArea = $request->data['terrainConstruction'];
+        $baseArea = $appreciationData['terrainConstruction'];
         $variationArea = 0.3 * $baseArea;
         $upperArea = $baseArea + $variationArea;
         $lowerArea = $baseArea - $variationArea;
@@ -71,35 +71,36 @@ class CalculateService
         return $value_uf_valoranet;
     }
 
-    public function calculateValueWitnesses($request){
+    public function calculateValueWitnesses($appreciationData){
         $currentDate = now('America/santiago')->format('d-m-Y');
         $currentDateValo = now('America/santiago')->format('Y-m-d');
         $getYear = substr($currentDateValo, 0, 4);
         $getRestDate = substr($currentDateValo, 4);
         $getYear -= 1;
         $dateYearsLess = $getYear . $getRestDate;
-        $latitude = $request->data['latitude'];
-        $longitude = $request->data['longitude'];
+        $latitude = $appreciationData['latitude'];
+        $longitude = $appreciationData['longitude'];
         $distanceWitnesses = 0.5;
         $promedioWitnesses = 0;
         $qualityWitnesses = 7.5;
         $difAsset = 1;
         $statusValueWitnesses = 1;
-        $baseArea = $request->data['terrainConstruction'];
+        $baseArea = $appreciationData['terrainConstruction'];
         $variationArea = 0.3 * $baseArea;
         $upperArea = $baseArea + $variationArea;
         $lowerArea = $baseArea - $variationArea;
         do {
-            $queryWitnesses = $this->dbService->getValueWitnesses($latitude, $longitude, $distanceWitnesses, $lowerArea, $upperArea, $difAsset, $dateYearsLess, $currentDateValo, $request);
+            $queryWitnesses = $this->dbService->getValueWitnesses($latitude, $longitude, $distanceWitnesses, $lowerArea, $upperArea, $difAsset, $dateYearsLess, $currentDateValo, $appreciationData);
             $distanceWitnesses += 0.3;
             $qualityWitnesses -= 1.0;
             if ($qualityWitnesses == 3) {
-                $difAsset += 1; 
+                $difAsset += 1;
             }
             if ($qualityWitnesses <= 1) {
                 $statusValueWitnesses = 0;
             }
         } while ($statusValueWitnesses != 0 && count($queryWitnesses) <= 10 && $distanceWitnesses <= 3);
+        \Log::error($queryWitnesses);
         $j = 1;
         foreach ($queryWitnesses as $row) {
             $promedioWitnesses += $row->value_uf;
