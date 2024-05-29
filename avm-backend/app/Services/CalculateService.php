@@ -58,7 +58,8 @@ class CalculateService
             }
         } while ($statusValueValoranet != 0 && count($queryReferences) <= 10 && $distanceValoranet < 8);
         $i = 1;
-
+        \Log::error('CALCULATE SERVICES VALORANET');
+        \Log::error($queryReferences);
         foreach ($queryReferences as $row) {
             $promedioValoranet += (int)$row->VALOR_COMERCIAL_ENCARGO_SUPERVISADO_UF;
             $i += 1;
@@ -68,7 +69,7 @@ class CalculateService
         }
 
         $value_uf_valoranet = $promedioValoranet / ($i - 1);
-        return $value_uf_valoranet;
+        return [ 'value_uf_valoranet' => $value_uf_valoranet, 'query_reference_valoranet' => $queryReferences ];
     }
 
     public function calculateValueWitnesses($appreciationData){
@@ -100,7 +101,8 @@ class CalculateService
                 $statusValueWitnesses = 0;
             }
         } while ($statusValueWitnesses != 0 && count($queryWitnesses) <= 10 && $distanceWitnesses <= 3);
-        \Log::error($queryWitnesses);
+
+        \Log::error('CALCULATE SERVICES WITNESSES');
         $j = 1;
         foreach ($queryWitnesses as $row) {
             $promedioWitnesses += $row->value_uf;
@@ -115,7 +117,6 @@ class CalculateService
         } else {
             $qualityWitnesses = 1;
         }
-
-        return true;
+        return [ 'value_uf_reference' => $value_uf_reference, 'query_reference_witnesses' => $queryWitnesses ];
     }
 }

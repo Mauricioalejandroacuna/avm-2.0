@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('appreciation_id');
             $table->foreign('appreciation_id')->references('id')->on('appreciations');
-            $table->unsignedBigInteger('users_id');
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('client_id');
+            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('file_type_id');
             $table->foreign('file_type_id')->references('id')->on('file_types');
             $table->string('path');

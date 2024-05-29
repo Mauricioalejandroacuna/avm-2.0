@@ -9,10 +9,10 @@ class FileService
         try {
             $appreciation = Appreciation::where('id', $request->id)->first();
 
-            $path = $request->file('file')->store($appreciation->users_id, 'files');
+            $path = $request->file('file')->store($appreciation->client_id, 'files');
             $file = new File;
-            $file->users_id = $appreciation->users_id;
             $file->appreciation_id = $request->id;
+            $file->client_id = $appreciation->client_id;
             $file->file_type_id = 1;
             $file->path = $path;
             $file->save();

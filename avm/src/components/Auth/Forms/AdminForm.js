@@ -92,11 +92,6 @@ export function AdminForm(){
         setErrorPassword(null);
     }
     return (
-        // Eliminar para pantalla de celulares el nombre VALUACIONES DE LA BARRA
-        // Agregar validacion del menu de la navbar cliente para los dispositivos moviles
-        // nombre y buttons derecha de la navbar
-        // cuando se busca nada devuelve informacion de admin
-        //
         <form onSubmit={handleSubmit(onSubmit)}>
             <input
                 onClick={() => clearErrorsEmail()}

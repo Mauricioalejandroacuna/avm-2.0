@@ -26,6 +26,8 @@ class AuthService
                     'email' => $userClient->email,
                     'type' => $userClient->userType[0]->name,
                     'sanctumToken' => $token,
+                    'supervisors' => [],
+                    'userTypes' => []
                 ];
                 $jwt = JWT::encode($payload, $key, 'HS256');
                 $data = [

@@ -32,9 +32,7 @@ export function TableClients(props) {
 
     useEffect(() => {
         (async () => {
-            setTimeout(async () => {
-                await getClientsBack();
-            }, 3000)
+            await getClientsBack();
         })()
     }, [refresh]);
 
@@ -189,7 +187,9 @@ export function TableClients(props) {
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">Nombre Cliente</StyledTableCell>
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">Teléfono Cliente</StyledTableCell>
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">Correo Cliente</StyledTableCell>
-                                    <StyledTableCell style={{ fontSize: 15 }} align="right">Acción</StyledTableCell>
+                                    { user.user.type === 'administrator_coordinator' && (
+                                        <StyledTableCell style={{ fontSize: 15 }} align="right">Acción</StyledTableCell>
+                                    ) }
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -197,29 +197,29 @@ export function TableClients(props) {
                                         ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         : rows
                                 ).map((row, index) => (
-
                                     <StyledTableRow key={index}>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.id}</StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.name}</StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >9 67765559</StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.email}</StyledTableCell>
-                                        <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >
-
-                                            <button
-                                                disabled={user.user.type === 'administrator_supervisor' ? true : false}
-                                                onClick={ () => { handleOpenCloseModal(row) } }
-                                                className="btn-icon"
-                                            >
-                                                <EditIcon fontSize="medium"   />
-                                            </button>
-                                            <button
-                                                disabled={user.user.type === 'administrator_supervisor' ? true : false}
-                                                onClick={ () => { handleOpenCloseModalDelete(row) } }
-                                                className="btn-icon"
-                                            >
-                                                <DeleteIcon fontSize="medium" />
-                                            </button>
-                                        </StyledTableCell>
+                                        {
+                                            user.user.type === 'administrator_coordinator' && (
+                                                <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >
+                                                    <button
+                                                        onClick={ () => { handleOpenCloseModal(row) } }
+                                                        className="btn-icon"
+                                                    >
+                                                        <EditIcon fontSize="medium"   />
+                                                    </button>
+                                                    <button
+                                                        onClick={ () => { handleOpenCloseModalDelete(row) } }
+                                                        className="btn-icon"
+                                                    >
+                                                        <DeleteIcon fontSize="medium" />
+                                                    </button>
+                                                </StyledTableCell>
+                                            )
+                                        }
                                     </StyledTableRow>
                                 ))}
                             </TableBody>

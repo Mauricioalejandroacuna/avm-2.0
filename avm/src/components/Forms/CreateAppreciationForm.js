@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import '../../components/styles/FormStyles.css';
 import { Map } from "../Elements/Map";
@@ -11,7 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CircularProgress from "@mui/material/CircularProgress";
 import { searchClient } from "../../services/client";
 import {enqueueSnackbar} from "notistack";
-import {storeAppreciation} from "../../services/appreciation";
+import { storeAppreciation } from "../../services/appreciation";
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 
@@ -34,7 +34,7 @@ export function CreateAppreciationForm() {
             }
         })()
     }, [communeSearch])
-
+    
     const getCommuneBack = async (search) => {
         const res = await searchCommune(search.trim());
         if(res.success === true){
@@ -69,7 +69,6 @@ export function CreateAppreciationForm() {
     })
     const onSubmit = async (data) => {
         setIsLoading(true);
-        console.log(data); return;
         const res = await storeAppreciation(data);
         if(res.success === true){
             enqueueSnackbar(res.message, {
@@ -81,7 +80,7 @@ export function CreateAppreciationForm() {
                 variant: "error"
             });
         }
-        navigate('/appreciations');
+        //navigate('/appreciations');
         setIsLoading(false);
     }
     const handleEnterKey = async () => {
@@ -292,22 +291,28 @@ export function CreateAppreciationForm() {
                             />
                             {typeAssetError && <p className="error-messages-table-type-of-asset" role="alert"> { typeAssetError } </p>}
                         </div>
-                        <input
-                            type="number"
-                            className="input-form-table"
-                            placeholder="Área Terreno"
-                            disabled={ isDataRutSet }
-                            { ...register("terrainArea", { valueAsNumber: true, required: "Area Terreno es requerido" }) }
-                        />
-                        {errors.terrainArea && <p className="error-messages-table" role="alert" > { errors.terrainArea.message } </p> }
-                        <input
-                            type="number"
-                            className="input-form-table"
-                            placeholder="Área construcción"
-                            disabled={ isDataRutSet }
-                            { ...register("terrainConstruction", { valueAsNumber: true, required: "Area Contruccion es requerido" }) }
-                        />
-                        {errors.terrainConstruction && <p className="error-messages-table" role="alert" > { errors.terrainConstruction.message } </p> }
+                        <Grid container style={{ width: "367px" }} >
+                            <Grid item xs={6}>
+                                <input
+                                    type="number"
+                                    className="input-block-e"
+                                    placeholder="Área Terreno"
+                                    disabled={ isDataRutSet }
+                                    { ...register("terrainArea", { valueAsNumber: true, required: "Area Terreno es requerido" }) }
+                                />
+                                {errors.terrainArea && <p className="error-messages-table" role="alert" > { errors.terrainArea.message } </p> }
+                            </Grid>
+                            <Grid item xs={6}>
+                                <input
+                                    type="number"
+                                    className="input-block-e"
+                                    placeholder="Área construcción"
+                                    disabled={ isDataRutSet }
+                                    { ...register("terrainConstruction", { valueAsNumber: true, required: "Area Contruccion es requerido" }) }
+                                />
+                                {errors.terrainConstruction && <p className="error-messages-table" role="alert" > { errors.terrainConstruction.message } </p> }
+                            </Grid>
+                        </Grid>
                         <input
                             type="number"
                             className="input-form-table"

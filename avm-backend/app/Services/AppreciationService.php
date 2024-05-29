@@ -1,11 +1,9 @@
 <?php
 namespace App\Services;
 
-use App\Mail\OrderShipped;
 use App\Models\Appreciation;
 use App\Models\File;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AppreciationExport;
 use App\Services\AccessCodeService;
@@ -40,9 +38,8 @@ class AppreciationService
             $type = 'coordinator_id';
         } else if ($adminType === 2){
             $type = 'supervisor_id';
-        } else if ($adminType === 3){
-            $type = 'client_id';
         }
+
         try {
             $appreciations = Appreciation::where($type, $request->user()->id)->with('file')->get();
             return [ 'success' => true, 'appreciations' => $appreciations];
@@ -54,7 +51,7 @@ class AppreciationService
 
     public function getAppreciationByClient($request){
         try {
-            $appreciationsByClient = Appreciation::where('users_id', $request->user()->id)
+            $appreciationsByClient = Appreciation::where('client_id', $request->user()->id)
                 ->with('file')
                 ->get();
             return [ 'success' => true, 'appreciations' => $appreciationsByClient ];
@@ -66,7 +63,7 @@ class AppreciationService
 
     public function createAppreciation($request){
         try {
-            if($appreciationData['newClient'] === true) {
+            if($request->data['newClient'] === true) {
                 $client = new User();
                 $client->name = $request->data['name'];
                 $client->rut = $request->data['rut'];
@@ -81,6 +78,7 @@ class AppreciationService
             $appreciation = new Appreciation();
             $appreciation->client_id = $client->id;
             $appreciation->coordinator_id = $request->user()->id;
+            $appreciation->supervisor_id = $request->data['typeSupervisor'];
             $appreciation->type_assets_id = $request->data['typeOfAsset'];
             $appreciation->access_code_id = 1;
             $appreciation->commune_id = $request->data['communeId'];
@@ -95,25 +93,25 @@ class AppreciationService
             $appreciation->longitude = $request->data['longitude'];
             $appreciation->status = true;
             $uf = $this->apiService->getUf(); // get uf
-            $value_uf_valoranet = $this->calculateService->calculateValueValoranet($appreciationData);
-            $value_uf_report = $this->calculateService->calculateValueWitnesses($appreciationData);
+            $resCalculateValoranet = $this->calculateService->calculateValueValoranet($request->data);
+            $resCalculateWitnesses = $this->calculateService->calculateValueWitnesses($request->data);
+            $queryValoranet = $resCalculateValoranet['query_reference_valoranet'];
+            $queryWitnesses = $resCalculateWitnesses['query_reference_witnesses'];
             $appreciation->value_uf_saved = $uf;
             $appreciation->value_uf_reference = $uf;
-            $appreciation->value_uf_valoranet =  $value_uf_valoranet;
-            $appreciation->value_uf_report =  $value_uf_report;
+            $appreciation->value_uf_valoranet =  $resCalculateValoranet['value_uf_valoranet'];
+            $appreciation->value_uf_report =  $resCalculateWitnesses['value_uf_reference'];
             $appreciation->quality = 10;
             $appreciation->save();
-            \Log::error($appreciation);
             $path = $client->id.'/appreciation'.$appreciation->id.'.xlsx';
-            $excel = Excel::store(new AppreciationExport($appreciation), $path, 'files');
-            Mail::to('mauricio.acuna@valuaciones.cl')->send(new OrderShipped($appreciation, $path));
-            $this->mailService->sendExcelCoordinator($appreciation->id);
+            $this->mailService->generateExcelCoordinator($appreciation->id, $queryValoranet, $queryWitnesses, $path);
             $file = new File;
             $file->appreciation_id = $appreciation->id;
-            $file->users_id = $client->id;
-            $file->file_type_id = 1;
+            $file->client_id = $client->id;
+            $file->file_type_id = 2;
             $file->path = $path;
             $file->save();
+            \Log::error('SERVICES_APPRECIATION_END');
             return [ 'success' => true, 'message' => 'La valoracion esta siendo procesada' ];
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());

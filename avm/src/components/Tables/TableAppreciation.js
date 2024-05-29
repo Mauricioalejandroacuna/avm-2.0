@@ -15,15 +15,17 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import UploadIcon from '@mui/icons-material/Upload';
-import DownloadIcon from '@mui/icons-material/Download';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
+import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import { styled } from '@mui/material/styles';
-import {getAppreciation} from "../../services/appreciation";
-import {SkeletonTable} from "../Elements/SkeletonTable";
-import {enqueueSnackbar} from "notistack";
-import {useAuthContext} from "../../context/AuthContext";
+import { getAppreciation } from "../../services/appreciation";
+import { SkeletonTable } from "../Elements/SkeletonTable";
+import { enqueueSnackbar } from "notistack";
+import { useAuthContext } from "../../context/AuthContext";
 import "../../components/styles/FormStyles.css";
 import UploadDialog from "../Elements/UploadDialog";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export function TableAppreciation(){
@@ -34,17 +36,16 @@ export function TableAppreciation(){
     const user = useAuthContext();
     React.useEffect(() => {
         (async () => {
-            setTimeout(() => {
-                if(user.isLogged){
-                    getAppreciationBack();
-                } else {
-                    enqueueSnackbar("NO TIENES PERMISOS!!", {
-                        variant: "error"
-                    });
-                }
-            }, 3000)
+            if(user.isLogged){
+                getAppreciationBack();
+            } else {
+                enqueueSnackbar("NO TIENES PERMISOS!!", {
+                    variant: "error"
+                });
+            }
         })()
     }, []);
+
     const getAppreciationBack = async () => {
         const res = await getAppreciation();
         if(res.code === "ERR_BAD_RESPONSE"){
@@ -88,10 +89,12 @@ export function TableAppreciation(){
             setIsLoading(false);
         }
         if(res?.appreciations.length > 0){
+            console.log(res.appreciations, 'APPRECIATION TABLE');
             setRows(res.appreciations);
             setIsLoading(false);
         }
     }
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
@@ -108,6 +111,7 @@ export function TableAppreciation(){
             border: 1,
         },
     }));
+
     function TablePaginationActions(props) {
         const theme = useTheme();
         const { count, page, rowsPerPage, onPageChange } = props;
@@ -230,22 +234,53 @@ export function TableAppreciation(){
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.value_uf_valoranet}</StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} > 5.5 </StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >
-                                            <button
-                                                className="btn-icon"
-                                                disabled={ user.user.type === 'administrator_supervisor' ? false : true }
-                                                onClick={() => handleUploadFile(row)}
-
-                                            >
-                                                <UploadIcon color="green" fontSize="medium" />
-                                            </button>
-                                            <button
-                                                className="btn-icon"
-                                                disabled={ user.user.type === 'administrator_supervisor' ? false : true }
-                                            >
-                                                <a href={`${apiUrl}/file/${row.file[0].path}`} download>
-                                                    <DownloadIcon fontSize="medium" />
-                                                </a>
-                                            </button>
+                                        {
+                                            user.user.type === 'administrator_supervisor' && (
+                                                <>
+                                                    { 
+                                                        row.file[1]?.file_type_id === 1 ? (
+                                                            <button
+                                                                className="btn-icon"
+                                                            >
+                                                                <a href={`${apiUrl}/file/${row.file[1].path}`} download>
+                                                                    <AssignmentTurnedInIcon />
+                                                                </a>
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                className="btn-icon"
+                                                                onClick={() => handleUploadFile(row)}
+                                                            >
+                                                                <DriveFileMoveIcon />
+                                                            </button>
+                                                        )
+                                                    }
+                                                    <button
+                                                        className="btn-icon"
+                                                    >
+                                                        <a href={`${apiUrl}/file/${row.file[0].path}`} download>
+                                                            <FilePresentIcon />
+                                                        </a>
+                                                    </button>
+                                                </>  
+                                            )
+                                        }
+                                        {
+                                            user.user.type === 'administrator_coordinator' && row.file?.length > 1 && (
+                                                <button
+                                                    className="btn-icon"
+                                                >
+                                                    <a href={`${apiUrl}/file/${row.file[1].path}`} download>
+                                                        <AssignmentTurnedInIcon />
+                                                    </a>
+                                                </button>
+                                            )
+                                        }        
+                                        {
+                                            user.user.type === 'administrator_coordinator' && row.file?.length === 1 && (
+                                                <p> Tasacion en revision </p>
+                                            )
+                                        } 
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 ))}

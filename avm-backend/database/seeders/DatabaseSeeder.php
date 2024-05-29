@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             TypeAssetSeeder::class,
             FileTypesSeeder::class,
             AccessCode::class,
-            RegionSeeder::class
+            RegionSeeder::class,
+            CommuneSeeder::class
         ]);
     }
 }

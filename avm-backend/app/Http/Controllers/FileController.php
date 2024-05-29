@@ -18,7 +18,7 @@ class FileController extends Controller
 
     public function getFile($id, $file)
     {
-        return response()->download('C:/Users/mauricio.acuna/Documents/Working/avm-2.0\avm-backend/storage/app/files/'.$id.'/'.$file, 'appreciation.xlsx');
+        return response()->download('C:/Users/mauricio.acuna/Documents/Working/avm-2.0/avm-backend/storage/app/files/'.$id.'/'.$file);
     }
 
     public function storeFile(Request $request){

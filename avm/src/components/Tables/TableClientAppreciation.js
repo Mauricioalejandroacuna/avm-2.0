@@ -11,14 +11,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import DownloadIcon from '@mui/icons-material/Download';
 import { styled } from '@mui/material/styles';
 import {SkeletonTable} from "../Elements/SkeletonTable";
-import {useAuthContext} from "../../context/AuthContext";
 import {getAppreciationByClient} from "../../services/appreciation";
 import {enqueueSnackbar} from "notistack";
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -26,21 +25,16 @@ const apiUrl = process.env.REACT_APP_API_URL;
 export function TableClientAppreciation(){
     const [isLoading, setIsLoading] = React.useState(true);
     const [ rows, setRows ] = React.useState([]);
-    const user = useAuthContext();
 
     React.useEffect(() => {
         (async () => {
-            setTimeout(() => {
-                getAppreciationBack();
-            }, 3000)
+            getAppreciationBack();
         })()
     }, []);
+    
     const getAppreciationBack = async () => {
-        // add validations
         const res = await getAppreciationByClient();
-        console.log(res, 'CLIETN APPRECIATION');
         if(res.code === "ERR_BAD_RESPONSE"){
-            console.log("PASO")
             enqueueSnackbar('Error en el servidor... Contactarse con el equipo TI', {
                 variant: "error",
             });
@@ -176,13 +170,14 @@ export function TableClientAppreciation(){
                         <Table sx={{ minWidth: 700 }}  className="glass-table" aria-label="customized table">
                             <TableHead>
                                 <TableRow>
-                                    <StyledTableCell style={{ fontSize: 15 }} align="right">Tipo de bien</StyledTableCell>
+                                    <StyledTableCell style={{ fontSize: 15 }} align="right">Accion</StyledTableCell>
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">Direccion</StyledTableCell>
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">Rol</StyledTableCell>
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">Valoracion Uf</StyledTableCell>
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">valoracion en pesos</StyledTableCell>
                                     <StyledTableCell style={{ fontSize: 15 }} align="right">Calidad valoracion</StyledTableCell>
-                                    <StyledTableCell style={{ fontSize: 15 }} align="right">Accion</StyledTableCell>
+                                    <StyledTableCell style={{ fontSize: 15 }} align="right">Tipo de bien</StyledTableCell>
+                                    
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -190,27 +185,29 @@ export function TableClientAppreciation(){
                                         ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         : rows
                                 ).map((row, index) => (
-                                    // Add styles to css file
-                                    // Generate 1 file for section
                                     <StyledTableRow key={index}>
-                                        <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.id_type_of_assets}</StyledTableCell>
+                                        <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >
+                                        
+                                            { (row.file?.length > 1) && (
+                                                <button
+                                                    className="btn-icon"
+                                                >
+                                                    <a href={`${apiUrl}/file/${row.file[1].path}`} download>
+                                                        <AssignmentTurnedInIcon />
+                                                    </a>
+                                                </button>
+                                            ) }
+                                            { (row.file?.length === 1) && (
+                                                <p> Tasacion en revision </p>
+                                            ) }
+                                        </StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.address}</StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.rol}</StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.value_uf_reference}</StyledTableCell>
-                                        <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.pesos}</StyledTableCell>
+                                        <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.value_uf_report}</StyledTableCell>
                                         <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.quantity}</StyledTableCell>
-                                        <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >
-                                        <button
-                                            className="btn-icon"
-                                        >
-                                            { (row.file?.length > 1) && (
-                                                <a href={`${apiUrl}/file/${row.file[1].path}`} download>
-                                                    <DownloadIcon />
-                                                </a>
-                                            ) }
-                                            
-                                        </button>
-                                        </StyledTableCell>
+                                        <StyledTableCell align="right" style={{ backgroundColor: '#f1f1f1', color: '#2f2f2f', borderColor: '#8d8d8d' }} >{row.id_type_of_assets}</StyledTableCell>
+                                        
                                     </StyledTableRow>
                                 ))}
                             </TableBody>

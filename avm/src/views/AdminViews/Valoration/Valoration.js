@@ -21,22 +21,20 @@ export function Valoration(){
                     <br/>
                     <div className='d-flex flex-row mb-2 justify-content-between'>
                         <h3 className='p-2'> Listado Valoraciones </h3>
-                        <button
-                            className={ user.user.type === 'administrator_supervisor' ? 'btn-table-disabled p-2' : 'btn-table p-2'}
-                            disabled={ user.user.type === 'administrator_supervisor' ? true : false}
-                            onClick={() => {
-                                navigate('/create-appreciation')
-                            }}
-                        >
-                            {
-                                user.user.type === 'administrator_supervisor' ? (
-                                    <FaPlusCircle style={{fontSize: "28px", marginRight: "10px"}} />
-                                ) : (
-                                    <FcPlus style={{fontSize: "28px", marginRight: "10px"}}/>
-                                )
-                            }
-                            Crear Valoración
-                        </button>
+                        {
+                            user.user.type === 'administrator_coordinator' && (
+                                <button
+                                    className='btn-table p-2'
+                                    onClick={() => {
+                                        navigate('/create-appreciation')
+                                    }}
+                                >
+                                    <FcPlus style={{fontSize: "28px", marginRight: "10px"}}/> 
+                                    Crear Valoración
+                                </button>
+                            )
+                        }
+                        
                     </div>
                     <hr/>
                     <input className='input-search' placeholder='Buscar'/>

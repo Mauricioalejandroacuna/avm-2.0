@@ -28,6 +28,7 @@ class AppreciationController extends Controller
     public function createAppreciation(Request $request){
 
         //dispatch(new ScriptAppreciation($request->data, $accessCodeService, $apiService, $calculateService, $mailService))->afterResponse();
+        \Log::error('CREATING_APPRECIATION');
         $res = $this->appreciationService->createAppreciation($request);
         return response()->json([
             'success' => true,

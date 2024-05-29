@@ -7,7 +7,8 @@ import {
     Button,
     IconButton,
     Menu,
-    MenuItem
+    MenuItem,
+    Grid
 } from "@mui/material";
 import logo from "../../logo.svg";
 import { Container } from "@mui/system";
@@ -100,8 +101,8 @@ export default function NavBar(){
                             />
                             VALUACIONES SPA
                         </Typography>
-
-                        <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
+                        
+                        <Box sx={{flexGrow: 1, display: {md: 'none'}}}>
                             <IconButton
                                 size="large"
                                 aria-label="account of current user"
@@ -146,7 +147,7 @@ export default function NavBar(){
                             noWrap
                             sx={{
                                 mr: 2,
-                                display: {xs: 'flex', md: 'none'},
+                                display: { md: 'none'},
                                 flexGrow: 1,
                                 fontWeight: 700,
                                 color: 'inherit',
@@ -163,8 +164,8 @@ export default function NavBar(){
                                     height: "100%",
                                 }}
                                 sx={{display: {xs: "4rem", md: "flex"}, mr: 1}}
-                            />VALUACIONES SPA
-                        </Typography>
+                            />
+                        </Typography >
                         { (user.user.type  === 'administrator_coordinator' || user.user.type === 'administrator_supervisor' ) && (
                             <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                                 {pages.map((page, index) => (
@@ -183,16 +184,16 @@ export default function NavBar(){
                                 ))}
                             </Box>
                         )}
-
-                        <Typography
-                            variant="h5"
-                            noWrap
+                        <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
+                            
+                        </Box>
+                      <Typography
                             sx={{
                                 mr: 2,
                                 fontSize: 15,
                                 color: 'inherit',
-                                textDecoration: 'none',
-                            }}
+                                textDecoration: 'none',                
+                              }}
                         >
                             {user.user.name}
                         </Typography>
