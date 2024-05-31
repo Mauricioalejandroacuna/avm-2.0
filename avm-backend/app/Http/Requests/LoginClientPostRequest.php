@@ -23,7 +23,7 @@ class LoginClientPostRequest extends FormRequest
     {
         return [
             'rut' => 'required|min:9',
-            'accessCode' => 'required|min:8'
+            'accessCode' => 'required|min:6'
         ];
     }
 
@@ -36,7 +36,7 @@ class LoginClientPostRequest extends FormRequest
     {
         return [
             'rut.min' => 'El RUT requiere como minimo 9 caracteres',
-            'accessCode.min' => 'El CODIGO ACCESO requiere minimo 8 caracteres',
+            'accessCode.min' => 'El CODIGO ACCESO requiere minimo 6 caracteres',
         ];
     }
 }

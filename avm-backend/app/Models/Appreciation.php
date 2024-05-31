@@ -15,12 +15,10 @@ class Appreciation extends Model
     {
         return $this->hasMany(File::class);
     }
-
     public function client(): HasMany
     {
         return $this->hasMany(User::class, 'id', 'client_id');
     }
-
     public function commune(): HasMany
     {
         return $this->hasMany(Commune::class, 'id', 'commune_id');
@@ -28,5 +26,9 @@ class Appreciation extends Model
     public function type_asset(): HasMany
     {
         return $this->hasMany(TypeAsset::class, 'id', 'type_assets_id');
+    }
+    public function supervisor(): HasMany
+    {
+        return $this->hasMany(User::class, 'id', 'supervisor_id');
     }
 }

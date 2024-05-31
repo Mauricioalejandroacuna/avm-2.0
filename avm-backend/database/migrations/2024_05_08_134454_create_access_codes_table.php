@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('access_codes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('users_id');
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('client_id');
+            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->string('code');
             $table->timestamps();
         });

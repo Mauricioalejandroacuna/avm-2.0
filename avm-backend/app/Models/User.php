@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     public function accessCodes(): HasMany
     {
-        return $this->hasMany(AccessCode::class, "users_id", 'id');
+        return $this->hasMany(AccessCode::class, "client_id", 'id');
     }
     public function getLastAccessCodeAttribute()
     {

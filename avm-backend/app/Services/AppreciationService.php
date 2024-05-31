@@ -74,7 +74,10 @@ class AppreciationService
             } else {
                 $client = User::where('rut', $request->data['rut'])->first();
             }
-            $this->accessCodeService->createAccessCode($client->id);
+            // falta enviar el numero de direccion
+            $resCalculateValoration = $this->calculateService->calculateAppreciation($request->data);
+            $queryValoranet = $resCalculateValoration['query_valoranet'];
+            $queryWitnesses = $resCalculateValoration['query_witnesses'];
             $appreciation = new Appreciation();
             $appreciation->client_id = $client->id;
             $appreciation->coordinator_id = $request->user()->id;
@@ -93,15 +96,15 @@ class AppreciationService
             $appreciation->longitude = $request->data['longitude'];
             $appreciation->status = true;
             $uf = $this->apiService->getUf(); // get uf
-            $resCalculateValoranet = $this->calculateService->calculateValueValoranet($request->data);
-            $resCalculateWitnesses = $this->calculateService->calculateValueWitnesses($request->data);
-            $queryValoranet = $resCalculateValoranet['query_reference_valoranet'];
-            $queryWitnesses = $resCalculateWitnesses['query_reference_witnesses'];
+            $value_uf_reference = $resCalculateValoration['value_uf_reference'];
+            $value_uf_valoranet = $resCalculateValoration['value_uf_valoranet'];
+            $value_uf_report = $resCalculateValoration['value_uf_valoranet'];
+            $quality = $resCalculateValoration['quality'];
             $appreciation->value_uf_saved = $uf;
-            $appreciation->value_uf_reference = $uf;
-            $appreciation->value_uf_valoranet =  $resCalculateValoranet['value_uf_valoranet'];
-            $appreciation->value_uf_report =  $resCalculateWitnesses['value_uf_reference'];
-            $appreciation->quality = 10;
+            $appreciation->value_uf_reference = $value_uf_reference;
+            $appreciation->value_uf_valoranet =  $value_uf_valoranet;
+            $appreciation->value_uf_report =  $value_uf_report;
+            $appreciation->quality = $quality;
             $appreciation->save();
             $path = $client->id.'/appreciation'.$appreciation->id.'.xlsx';
             $this->mailService->generateExcelCoordinator($appreciation->id, $queryValoranet, $queryWitnesses, $path);

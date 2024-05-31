@@ -55,7 +55,7 @@
                                                         Correo de acceso:
                                                     </td>
                                                     <td width="65%" valign="top" align="center">
-                                                        {{-- {{ $details['mail'] }} --}}
+                                                         {{ $details['mail'] }}
                                                     </td>
                                                 </tr>
                                                 <tr style="background-color: #cecbcb;">
@@ -64,7 +64,7 @@
                                                         Código de acceso:
                                                     </td>
                                                     <td width="65%" valign="top" align="center">
-                                                        {{-- {{ $details['code'] }} --}}
+                                                        {{ $details['code'] }}
                                                     </td>
                                                 </tr>
                                                 <tr style="background-color: #f2f2f2;">
@@ -74,7 +74,7 @@
                                                     </td>
                                                     <td width="65%" valign="top" align="center">
                                                         <a
-                                                            {{-- href={{ env('APPBACKENDURL') }}>https://avm.valuaciones.cl/</a> --}}
+                                                            href={{ env('APPBACKENDURL') }}>https://avm.valuaciones.cl/</a>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -99,7 +99,7 @@
                                                         Calidad valoración:
                                                     </td>
                                                     <td width="65%" valign="top" align="center">
-                                                        {{-- {{ $details['nota'] }}/7.0 --}}
+                                                        {{ $details['nota'] }}/7.0
                                                     </td>
                                                 </tr>
                                                 <tr style="background-color: #cecbcb;">
@@ -108,7 +108,7 @@
                                                         Valoración en UF / Valoración en pesos:
                                                     </td>
                                                     <td width="65%" valign="top" align="center">
-                                                        {{-- UF {{ $details['valor'] }} --}}
+                                                        UF {{ $details['valor'] }}
                                                     </td>
                                                 </tr>
                                                 <tr style="background-color: #f2f2f2;">
@@ -117,7 +117,7 @@
                                                         Dirección:
                                                     </td>
                                                     <td width="65%" valign="top" align="center">
-                                                        {{ $details['address'] }}
+                                                        {{$details['address']}}
                                                     </td>
                                                 </tr>
                                                 <tr style="background-color: #cecbcb;">

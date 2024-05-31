@@ -9,12 +9,22 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderShipped;
 use App\Exports\AppreciationExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\AccessCodeService;
+use App\Mail\CodeToClient;
 
 class MailService
 {
+
+    private AccessCodeService $accessCodeService;
+
+    public function __construct(AccessCodeService $accessCodeService)
+    {
+        $this->accessCodeService = $accessCodeService;
+    }
+
     public function generateExcelCoordinator($id, $queryValoranet, $queryWitnesses, $path){
         try{
-            $appreciation = Appreciation::where('id', $id)->with('client')->with('commune.region')->with('type_asset')->first();
+            $appreciation = Appreciation::where('id', $id)->with('client')->with('commune.region')->with('type_asset')->with('supervisor')->first();
             $date = $appreciation['updated_at']->format('d-m-Y');
             // calculate pesos
             $value_uf = explode('.', $appreciation['value_uf_report']);
@@ -88,6 +98,8 @@ class MailService
             $img6 = $url_img_wit . self::img_map_mercado($url_img_wit, (array)$dataDecodeWitnesses);
             Storage::disk('public')->put('mapa_wit.png', file_get_contents($img6));
 
+            $dataValoranet = json_decode($queryValoranet, true);
+            $dataWitnesses = json_decode($queryWitnesses, true);
             // save data to details varaible to send to blade view
             $details = [
                 'nombre_cliente' => $appreciation->client[0]->name,
@@ -115,14 +127,13 @@ class MailService
                 'min_uf' => number_format($rango_min_uf, 0, ",", "."),
                 'max_pesos' => number_format($rango_max_p, 0, ",", "."),
                 'min_pesos' => number_format($rango_min_p, 0, ",", "."),
-                'valo' => $queryValoranet,
-                'wit' => $queryWitnesses,
+                'valo' => (array)$dataValoranet,
+                'wit' => (array)$dataWitnesses,
                 'quality' => $appreciation['quality'],
             ];
-            // cargar excel correctamente
             $excel = Excel::store(new AppreciationExport($details), $path, 'files');
-            //Mail::to('mauricio.acuna@valuaciones.cl')->send(new OrderShipped($details, $path));
-            \Log::error('END_MAILSERVICES');
+            Mail::to($appreciation->supervisor[0]->email)->send(new OrderShipped($details, $path));
+            $this->sendInfoClient($appreciation, $details);
             return true;
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());
@@ -133,9 +144,7 @@ class MailService
         }
     }
 
-    public function generateDataViewMail(){
 
-    }
 
     public function img_map_valuaciones($url_img_val, $data)
     {
@@ -155,8 +164,27 @@ class MailService
         return $url_img_wit . "&key=AIzaSyBL1KI92Lt_nzwiO3FPbbAnaZpd-vuvNFk";
     }
 
-    public function sendInfoClient(){
+    public function sendInfoClient($appreciation, $details){
         try{
+            // generate access code
+            $responseCodeService = $this->accessCodeService->createAccessCode($appreciation->client[0]->id);
+            \Log::error($appreciation->client[0]->name);
+            \Log::error($details['direccion']);
+            \Log::error($responseCodeService['access_code']);
+            $detailsClient = [
+                'title' => 'Estimado/a ' . $appreciation->client[0]->name . '. A continuación se encuentran los datos para ingresar al sistema de tasación automatica(AVM), Si desea, ingrese al enlace incluido con su correo y código de acceso. Mas detalles en el informe adjunto en PDF',
+                'code' => ' ' . $responseCodeService['access_code'] . ' ',
+                'mail' => $appreciation->client[0]->email,
+                'address' => $details['direccion'] . ' ' . $appreciation->address_number,
+                'rol' => $appreciation->rol,
+                'region' => $appreciation->commune[0]->region->name . ' / ' . $appreciation->commune[0]->name,
+                'bien' => $appreciation['description'],
+                'nota' => $appreciation['quality'],
+                'valor' => $details['valor_uf'] . ' / $' . $details['valor_pesos'],
+                'bien' => $details['tipo_bien']
+            ];
+            Mail::to($appreciation->client[0]->email)->send(new CodeToClient($detailsClient));
+            \Log::error('MAIL CLIENT END');
             return true;
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());

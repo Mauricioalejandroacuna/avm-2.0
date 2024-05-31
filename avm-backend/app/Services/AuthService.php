@@ -18,6 +18,7 @@ class AuthService
                 ->with('userType')
                 ->with('accessCodes')
                 ->first();
+                \Log::error($userClient);
             if(Hash::check($credential['accessCode'], $userClient->accessCodes[0]->code)){
                 $key = 'test666';
                 $token = $userClient->createToken($userClient->rut)->plainTextToken;

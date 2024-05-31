@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreign('type_asset_id')->references('id')->on('type_assets');
             $table->unsignedBigInteger('commune_id');
             $table->foreign('commune_id')->references('id')->on('communes');
-            $table->integer('category');
-            $table->timestamp('publication_date');
+            $table->date('publication_date');
             $table->string('address');
             $table->double('latitude');
             $table->double('longitude');
@@ -26,9 +25,9 @@ return new class extends Migration
             $table->integer('bathrooms');
             $table->double('construction_area');
             $table->double('terrain_area');
-            $table->integer('value_pesos');
-            $table->integer('value_uf');
-            $table->integer('status');
+            $table->unsignedBigInteger('value_pesos');
+            $table->unsignedBigInteger('value_uf');
+            $table->unsignedBigInteger('status');
             $table->timestamps();
         });
     }

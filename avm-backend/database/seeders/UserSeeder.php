@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
             [
                 'user_types_id' => 3,
                 'name' => 'Mauricio',
-                'email' => 'mauricio.acuna@valuaciones.cl',
+                'email' => 'test@valuaciones.cl',
                 'email_verified_at' => now(),
                 'rut' => '19350720-4',
                 'phone' => '968977661',
@@ -82,7 +82,7 @@ class UserSeeder extends Seeder
             [
                 'user_types_id' => 2,
                 'name' => 'Test Name Supervisor Valuaciones',
-                'email' => 'admin@valuaciones.cl',
+                'email' => 'mauricio.acuna@valuaciones.cl',
                 'email_verified_at' => now(),
                 'rut' => null,
                 'password' => Hash::make('qwerty123'),

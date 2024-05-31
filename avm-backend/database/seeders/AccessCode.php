@@ -16,11 +16,11 @@ class AccessCode extends Seeder
     {
         $data = [
             [
-                'users_id' => 2,
+                'client_id' => 2,
                 'code' => Hash::make('qwerty123'),
             ],
             [
-                'users_id' => 3,
+                'client_id' => 3,
                 'code' => Hash::make('qwerty123'),
             ]
         ];
