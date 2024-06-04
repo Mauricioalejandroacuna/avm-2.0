@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services;
-use App\Services\DBService;
 
 /**
  * In the calculate services, there are function
@@ -10,19 +9,12 @@ use App\Services\DBService;
 
 class CalculateService
 {
-
-    private DBService $dbService;
-
-    public function __construct(DBService $dbService)
-    {
-        $this->dbService = $dbService;
-    }
-
     /**
      * Calculate valoranet function generate one valoration
      * with data of table valoranet of AVM
      */
     public function calculateValueValoranet($appreciationData){
+        $dbService = new DBService();
         $currentDate = now('America/santiago')->format('d-m-Y');
         $currentDateValo = now('America/santiago')->format('Y-m-d');
         $getYear = substr($currentDateValo, 0, 4);
@@ -54,7 +46,7 @@ class CalculateService
         $statusValueValoranet = 1;
 
         do {
-            $queryReferences = $this->dbService->getValueValoranet($latitude, $longitude, $distanceValoranet, $dateYearsLess, $currentDateValo, $typeAsset, $typeAsset2, (float)$lowerArea, (float)$upperArea);
+            $queryReferences = $dbService->getValueValoranet($latitude, $longitude, $distanceValoranet, $dateYearsLess, $currentDateValo, $typeAsset, $typeAsset2, (float)$lowerArea, (float)$upperArea);
             $distanceValoranet += 0.5;
             $qualityValoranet -= 0.5;
             if ($qualityValoranet <= 1) {
@@ -91,6 +83,7 @@ class CalculateService
      *
      */
     public function calculateValueWitnesses($appreciationData){
+        $dbService = new DBService();
         $currentDate = now('America/santiago')->format('d-m-Y');
         $currentDateValo = now('America/santiago')->format('Y-m-d');
         $getYear = substr($currentDateValo, 0, 4);
@@ -109,7 +102,7 @@ class CalculateService
         $upperArea = $baseArea + $variationArea;
         $lowerArea = $baseArea - $variationArea;
         do {
-            $queryWitnesses = $this->dbService->getValueWitnesses($latitude, $longitude, $distanceWitnesses, $lowerArea, $upperArea, $difAsset, $dateYearsLess, $currentDateValo, $appreciationData);
+            $queryWitnesses = $dbService->getValueWitnesses($latitude, $longitude, $distanceWitnesses, $lowerArea, $upperArea, $difAsset, $dateYearsLess, $currentDateValo, $appreciationData);
             $distanceWitnesses += 0.3;
             $qualityWitnesses -= 1.0;
             if ($qualityWitnesses == 3) {

@@ -9,19 +9,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderShipped;
 use App\Exports\AppreciationExport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Services\AccessCodeService;
 use App\Mail\CodeToClient;
 
 class MailService
 {
-
-    private AccessCodeService $accessCodeService;
-
-    public function __construct(AccessCodeService $accessCodeService)
-    {
-        $this->accessCodeService = $accessCodeService;
-    }
-
     public function generateExcelCoordinator($id, $queryValoranet, $queryWitnesses, $path){
         try{
             $appreciation = Appreciation::where('id', $id)->with('client')->with('commune.region')->with('type_asset')
@@ -168,9 +159,11 @@ class MailService
     }
 
     public function sendInfoClient($appreciation, $details){
+        $accessCodeService = new AccessCodeService();
+
         try{
             // generate access code
-            $responseCodeService = $this->accessCodeService->createAccessCode($appreciation->client[0]->id);
+            $responseCodeService = $accessCodeService->createAccessCode($appreciation->client[0]->id);
             \Log::error($appreciation->client[0]->name);
             \Log::error($details['direccion']);
             \Log::error($responseCodeService['access_code']);

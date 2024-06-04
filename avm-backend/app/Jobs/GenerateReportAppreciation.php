@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Services\AppreciationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Services\ScriptService;
 
 class GenerateReportAppreciation implements ShouldQueue
 {
@@ -31,6 +31,7 @@ class GenerateReportAppreciation implements ShouldQueue
      */
     public function handle(): void
     {
-        \Log::error($this->appreciationData);
+        $appreciationService = new AppreciationService();
+        $appreciationService->createAppreciation($this->appreciationData);
     }
 }

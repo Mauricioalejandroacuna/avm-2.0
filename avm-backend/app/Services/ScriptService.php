@@ -8,5 +8,6 @@ class ScriptService
 {
 
     public function generateValoration(){
+        \Log::error('GENERATE APPRECIATION WITH JOBS');
     }
 }

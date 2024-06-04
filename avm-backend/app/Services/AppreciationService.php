@@ -4,33 +4,9 @@ namespace App\Services;
 use App\Models\Appreciation;
 use App\Models\File;
 use App\Models\User;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\AppreciationExport;
-use App\Services\AccessCodeService;
-use App\Services\ApiService;
-use App\Services\CalculateService;
-use App\Services\MailService;
 
 class AppreciationService
 {
-    private AccessCodeService $accessCodeService;
-    private ApiService $apiService;
-    private CalculateService $calculateService;
-    private MailService $mailService;
-
-    public function __construct(
-        AccessCodeService $accessCodeService,
-        ApiService $apiService,
-        CalculateService $calculateService,
-        MailService $mailService
-    )
-    {
-        $this->accessCodeService = $accessCodeService;
-        $this->apiService = $apiService;
-        $this->calculateService = $calculateService;
-        $this->mailService = $mailService;
-    }
-
     public function getAppreciationByAdmin($request){
 
         $adminType = $request->user()->user_types_id;
@@ -61,40 +37,44 @@ class AppreciationService
         }
     }
 
-    public function createAppreciation($request){
+    public function createAppreciation($data){
+        $apiService = new ApiService();
+        $calculateService = new CalculateService();
+        $mailService = new MailService();
+
         try {
-            if($request['newClient'] === true) {
+            if($data['newClient'] === true) {
                 $client = new User();
-                $client->name = $request['name'];
-                $client->rut = $request['rut'];
+                $client->name = $data['name'];
+                $client->rut = $data['rut'];
                 $client->user_types_id = 3;
-                $client->email = $request['email'];
-                $client->phone = $request['phone'];
+                $client->email = $data['email'];
+                $client->phone = $data['phone'];
                 $client->save();
             } else {
-                $client = User::where('rut', $request['rut'])->first();
+                $client = User::where('rut', $data['rut'])->first();
             }
             // falta enviar el numero de direccion
-            $resCalculateValoration = $this->calculateService->calculateAppreciation($request);
+            $resCalculateValoration = $calculateService->calculateAppreciation($data);
             $queryValoranet = $resCalculateValoration['query_valoranet'];
             $queryWitnesses = $resCalculateValoration['query_witnesses'];
             $appreciation = new Appreciation();
             $appreciation->client_id = $client->id;
-            $appreciation->coordinator_id = $request->user()->id;
-            $appreciation->supervisor_id = $request['typeSupervisor'];
-            $appreciation->type_assets_id = $request['typeOfAsset'];
+            $appreciation->coordinator_id = $data['userLoggedId'];
+            $appreciation->supervisor_id = $data['typeSupervisor'];
+            $appreciation->type_assets_id = $data['typeOfAsset'];
             $appreciation->access_code_id = 1;
-            $appreciation->commune_id = $request['communeId'];
-            $appreciation->address = $request['addressMap'];
-            $appreciation->rol = $request['rolBlock'].'-'.$request['rolPlotOfLand'];
-            $appreciation->terrain_area =$request['terrainArea'];
-            $appreciation->construction_area = $request['terrainConstruction'];
-            $appreciation->bedrooms = $request['bedroom'];
-            $appreciation->bathrooms = $request['bathroom'];
-            $appreciation->latitude = $request['latitude'];
-            $appreciation->longitude = $request['longitude'];
+            $appreciation->commune_id = $data['communeId'];
+            $appreciation->address = $data['addressMap'];
+            $appreciation->rol = $data['rolBlock'].'-'.$data['rolPlotOfLand'];
+            $appreciation->terrain_area =$data['terrainArea'];
+            $appreciation->construction_area = $data['terrainConstruction'];
+            $appreciation->bedrooms = $data['bedroom'];
+            $appreciation->bathrooms = $data['bathroom'];
+            $appreciation->latitude = $data['latitude'];
+            $appreciation->longitude = $data['longitude'];
             $appreciation->status = true;
-            $uf = $this->apiService->getUf(); // get uf
+            $uf = $apiService->getUf(); // get uf
             $value_uf_reference = $resCalculateValoration['value_uf_reference'];
             $value_uf_valoranet = $resCalculateValoration['value_uf_valoranet'];
             $value_uf_report = $resCalculateValoration['value_uf_valoranet'];
@@ -106,7 +86,7 @@ class AppreciationService
             $appreciation->quality = $quality;
             $appreciation->save();
             $path = $client->id.'/appreciation'.$appreciation->id.'.xlsx';
-            $this->mailService->generateExcelCoordinator($appreciation->id, $queryValoranet, $queryWitnesses, $path);
+            $mailService->generateExcelCoordinator($appreciation->id, $queryValoranet, $queryWitnesses, $path);
             $file = new File;
             $file->appreciation_id = $appreciation->id;
             $file->client_id = $client->id;

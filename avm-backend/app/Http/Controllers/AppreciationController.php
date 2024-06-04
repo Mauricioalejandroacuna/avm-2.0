@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GenerateReportAppreciation;
-use App\Jobs\ScriptAppreciation;
 use App\Services\AppreciationService;
 use Illuminate\Http\Request;
 use App\Helpers\validateRut;
@@ -30,13 +29,31 @@ class AppreciationController extends Controller
     }
 
     public function createAppreciation(StoreAppreciationRequest $request){
-        \Log::error($request->rut);
         if($this->validateRut->validatorRut($request->rut)){
             return response()->json(['success' => false, 'message' => 'Rut incorrecto']);
         }
-        //dispatch(new ScriptAppreciation($request->data, $accessCodeService, $apiService, $calculateService, $mailService))->afterResponse();
-        \Log::error('CREATING_APPRECIATION');
-        $res = $this->appreciationService->createAppreciation($request);
+        $data = [
+            'userLoggedId' => $request->user()->id,
+            'newClient' => $request->newClient,
+            'name' => $request->name,
+            'rut' => $request->rut,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'typeSupervisor' => $request->typeSupervisor,
+            'typeOfAsset' => $request->typeOfAsset,
+            'communeId' => $request->communeId,
+            'addressMap' => $request->addressMap,
+            'rolBlock' => $request->rolBlock,
+            'rolPlotOfLand' => $request->rolPlotOfLand,
+            'terrainArea' => $request->terrainArea,
+            'terrainConstruction' => $request->terrainConstruction,
+            'bedroom' => $request->bedroom,
+            'bathroom' => $request->bathroom,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ];
+        dispatch(new GenerateReportAppreciation($data))->onQueue('high');
+        \Log::error('CREATING_APPRECIATION_WITH_JOB');
         return response()->json([
             'success' => true,
             'message' => 'El sistema esta procesando la valoracion'

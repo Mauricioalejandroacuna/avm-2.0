@@ -25,10 +25,9 @@ class ScriptAppreciation implements ShouldQueue
      protected $appreciationData;
      private ScriptService $scriptService;
 
-    public function __construct($appreciationData,  AccessCodeService $accessCodeService, ApiService $apiService, CalculateService $calculateService, MailService $mailService)
+    public function __construct($appreciationData)
     {
         $this->appreciationData = $appreciationData;
-        $this->appreciationService = new AppreciationService();
     }
 
     /**
