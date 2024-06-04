@@ -57,7 +57,6 @@ class User extends Authenticatable
         if ($this->userType->name === 'cliente') {
             return $this->accessCodes()->latest()->first();
         }
-
         return null;
     }
     public function userType(): HasMany

@@ -24,13 +24,16 @@ class MailService
 
     public function generateExcelCoordinator($id, $queryValoranet, $queryWitnesses, $path){
         try{
-            $appreciation = Appreciation::where('id', $id)->with('client')->with('commune.region')->with('type_asset')->with('supervisor')->first();
+            $appreciation = Appreciation::where('id', $id)->with('client')->with('commune.region')->with('type_asset')
+                ->with('supervisor')->first();
             $date = $appreciation['updated_at']->format('d-m-Y');
             // calculate pesos
             $value_uf = explode('.', $appreciation['value_uf_report']);
             $value_pesos = explode('.', ($appreciation['value_uf_saved'] * $appreciation['value_uf_report']));
-            $full_address = $appreciation['address'] . ' ' . $appreciation['address_number'];
+            $full_address = $appreciation['address'];
 
+            $appreciation->value_pesos = number_format($value_pesos[0], 0, ",", ".");
+            $appreciation->save();
             // Calculate +- 15% for final range
             $rango_min_p_temp = $value_pesos[0] * 0.85;
             $rango_max_p_temp = $value_pesos[0] * 1.15;

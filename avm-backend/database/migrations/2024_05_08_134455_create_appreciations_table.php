@@ -26,7 +26,6 @@ return new class extends Migration
             $table->unsignedBigInteger('commune_id');
             $table->foreign('commune_id')->references('id')->on('communes');
             $table->string('address');
-            $table->integer('address_number');
             $table->string('rol');
             $table->double('terrain_area');
             $table->double('construction_area');
@@ -38,6 +37,7 @@ return new class extends Migration
             $table->double('value_uf_saved');
             $table->double('value_uf_reference');
             $table->double('value_uf_valoranet');
+            $table->string('value_pesos')->nullable();
             $table->double('value_uf_report');
             $table->double('quality');
             $table->softDeletes();

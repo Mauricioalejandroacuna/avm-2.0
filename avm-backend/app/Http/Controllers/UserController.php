@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\validateRut;
 use App\Services\UserService;
+use App\Http\Requests\StoreClientRequest;
+use App\Http\Requests\StoreAdminRequest;
+
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -22,26 +25,32 @@ class UserController extends Controller
     }
 
     public function searchClient(Request $request){
+        if($this->validateRut->validatorRut($request->rut)){
+            return response()->json(['success' => false, 'message' => 'Rut incorrecto']);
+        }
         $res = $this->userService->searchClient($request->rut);
         return response()->json($res);
     }
 
-    public function registerClient(Request $request){
+    public function registerClient(StoreClientRequest $request){
+        if($this->validateRut->validatorRut($request->rut)){
+            return response()->json(['success' => false, 'message' => 'Rut incorrecto']);
+        }
         $res = $this->userService->createClient($request);
         return response()->json($res);
     }
 
-    public function registerAdminCoordinator(Request $request){
+    public function registerAdminCoordinator(StoreAdminRequest $request){
         $res =  $this->userService->createAdminCoordinator($request);
         return response()->json($res);
     }
 
-    public function registerAdminSupervisor(Request $request){
+    public function registerAdminSupervisor(StoreAdminRequest $request){
         $res =  $this->userService->createAdminSupervisor($request);
         return response()->json($res);
     }
 
-    public function updateClient(Request $request, $id){
+    public function updateClient(StoreClientRequest $request, $id){
         if($this->validateRut->validatorRut($request->rut)){
             return response()->json(['success' => false, 'message' => 'Rut incorrecto']);
         }
@@ -49,12 +58,12 @@ class UserController extends Controller
         return response()->json($res);
     }
 
-    public function updateAdminCoordinator(Request $request, $id){
+    public function updateAdminCoordinator(StoreAdminRequest $request, $id){
         $res =  $this->userService->updateAdminCoordinator($request, $id);
         return response()->json($res);
     }
 
-    public function updateSupervisor(Request $request, $id){
+    public function updateSupervisor(StoreAdminRequest $request, $id){
         $res = $this->userService->updateAdminSupervisor($request, $id);
         return response()->json($res);
     }

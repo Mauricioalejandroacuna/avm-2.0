@@ -27,9 +27,7 @@ export async function storeAppreciation(data){
     let token = await getSanctumToken();
     AxiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     return AxiosInstance.post('create-appreciation',
-        JSON.stringify({
-            data: data
-        })
+        JSON.stringify(data)
     ).then((res) => {
         return res.data
     }).catch((e) => {

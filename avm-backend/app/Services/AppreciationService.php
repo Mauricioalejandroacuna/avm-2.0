@@ -41,7 +41,8 @@ class AppreciationService
         }
 
         try {
-            $appreciations = Appreciation::where($type, $request->user()->id)->with('file')->get();
+            $appreciations = Appreciation::where($type, $request->user()->id)->with('file')->with('client')
+                ->with('type_asset')->get();
             return [ 'success' => true, 'appreciations' => $appreciations];
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());
@@ -52,8 +53,7 @@ class AppreciationService
     public function getAppreciationByClient($request){
         try {
             $appreciationsByClient = Appreciation::where('client_id', $request->user()->id)
-                ->with('file')
-                ->get();
+                ->with('file')->with('type_asset')->get();
             return [ 'success' => true, 'appreciations' => $appreciationsByClient ];
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());
@@ -63,37 +63,36 @@ class AppreciationService
 
     public function createAppreciation($request){
         try {
-            if($request->data['newClient'] === true) {
+            if($request['newClient'] === true) {
                 $client = new User();
-                $client->name = $request->data['name'];
-                $client->rut = $request->data['rut'];
+                $client->name = $request['name'];
+                $client->rut = $request['rut'];
                 $client->user_types_id = 3;
-                $client->email = $request->data['email'];
-                $client->phone = $request->data['phone'];
+                $client->email = $request['email'];
+                $client->phone = $request['phone'];
                 $client->save();
             } else {
-                $client = User::where('rut', $request->data['rut'])->first();
+                $client = User::where('rut', $request['rut'])->first();
             }
             // falta enviar el numero de direccion
-            $resCalculateValoration = $this->calculateService->calculateAppreciation($request->data);
+            $resCalculateValoration = $this->calculateService->calculateAppreciation($request);
             $queryValoranet = $resCalculateValoration['query_valoranet'];
             $queryWitnesses = $resCalculateValoration['query_witnesses'];
             $appreciation = new Appreciation();
             $appreciation->client_id = $client->id;
             $appreciation->coordinator_id = $request->user()->id;
-            $appreciation->supervisor_id = $request->data['typeSupervisor'];
-            $appreciation->type_assets_id = $request->data['typeOfAsset'];
+            $appreciation->supervisor_id = $request['typeSupervisor'];
+            $appreciation->type_assets_id = $request['typeOfAsset'];
             $appreciation->access_code_id = 1;
-            $appreciation->commune_id = $request->data['communeId'];
-            $appreciation->address = $request->data['addressMap'];
-            $appreciation->address_number = 123;
-            $appreciation->rol = $request->data['rolBlock'].'-'.$request->data['rolPlotOfLand'];
-            $appreciation->terrain_area =$request->data['terrainArea'];
-            $appreciation->construction_area = $request->data['terrainConstruction'];
-            $appreciation->bedrooms = $request->data['bedroom'];
-            $appreciation->bathrooms = $request->data['bathroom'];
-            $appreciation->latitude = $request->data['latitude'];
-            $appreciation->longitude = $request->data['longitude'];
+            $appreciation->commune_id = $request['communeId'];
+            $appreciation->address = $request['addressMap'];
+            $appreciation->rol = $request['rolBlock'].'-'.$request['rolPlotOfLand'];
+            $appreciation->terrain_area =$request['terrainArea'];
+            $appreciation->construction_area = $request['terrainConstruction'];
+            $appreciation->bedrooms = $request['bedroom'];
+            $appreciation->bathrooms = $request['bathroom'];
+            $appreciation->latitude = $request['latitude'];
+            $appreciation->longitude = $request['longitude'];
             $appreciation->status = true;
             $uf = $this->apiService->getUf(); // get uf
             $value_uf_reference = $resCalculateValoration['value_uf_reference'];

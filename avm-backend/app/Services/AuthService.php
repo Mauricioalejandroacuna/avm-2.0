@@ -21,12 +21,12 @@ class AuthService
                 \Log::error($userClient);
             if(Hash::check($credential['accessCode'], $userClient->accessCodes[0]->code)){
                 $key = 'test666';
-                $token = $userClient->createToken($userClient->rut)->plainTextToken;
+                $sanctumToken = $userClient->createToken($userClient->rut)->plainTextToken;
                 $payload = [
                     'name' => $userClient->name,
                     'email' => $userClient->email,
                     'type' => $userClient->userType[0]->name,
-                    'sanctumToken' => $token,
+                    'sanctumToken' => $sanctumToken,
                     'supervisors' => [],
                     'userTypes' => []
                 ];

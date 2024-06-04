@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\FileService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\StoreFileRequest;
 
 class FileController extends Controller
 {
@@ -16,12 +15,12 @@ class FileController extends Controller
         $this->fileService = $fileService;
     }
 
-    public function getFile($id, $file)
+    public function getFile($id, $path)
     {
-        return response()->download('C:/Users/mauricio.acuna/Documents/Working/avm-2.0/avm-backend/storage/app/files/'.$id.'/'.$file);
+        return response()->download('C:/Users/mauricio.acuna/Documents/Working/avm-2.0/avm-backend/storage/app/files/'.$id.'/'.$path);
     }
 
-    public function storeFile(Request $request){
+    public function storeFile(StoreFileRequest $request){
         $res = $this->fileService->storeFile($request);
         return response()->json($res);
     }
