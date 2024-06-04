@@ -19,8 +19,6 @@ class GenerateReportAppreciation implements ShouldQueue
 
     protected $appreciationData;
 
-    //private ScriptService $scriptService;
-
     public function __construct($appreciationData)
     {
         $this->appreciationData = $appreciationData;

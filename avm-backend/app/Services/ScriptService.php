@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Process;
 class ScriptService
 {
 
-    public function generateValoration(){
-        \Log::error('GENERATE APPRECIATION WITH JOBS');
+    public function scrappingData($dataAppreciation){
+        $result = Process::run('python C:\Users\mauricio.acuna\Documents\Working\Script\main.py --appreciation_id=1');
+        \Log::error($result->output());
     }
 }

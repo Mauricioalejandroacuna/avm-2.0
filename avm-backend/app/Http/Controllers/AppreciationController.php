@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GenerateReportAppreciation;
+use App\Jobs\ScriptAppreciation;
 use App\Services\AppreciationService;
 use Illuminate\Http\Request;
 use App\Helpers\validateRut;
@@ -52,7 +53,8 @@ class AppreciationController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ];
-        dispatch(new GenerateReportAppreciation($data))->onQueue('high');
+        //dispatch(new GenerateReportAppreciation($data))->onQueue('high');
+        dispatch(new ScriptAppreciation($data))->onQueue('high');
         \Log::error('CREATING_APPRECIATION_WITH_JOB');
         return response()->json([
             'success' => true,

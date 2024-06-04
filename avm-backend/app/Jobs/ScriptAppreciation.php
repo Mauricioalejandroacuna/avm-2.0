@@ -22,8 +22,7 @@ class ScriptAppreciation implements ShouldQueue
      * Create a new job instance.
      */
 
-     protected $appreciationData;
-     private ScriptService $scriptService;
+    protected $appreciationData;
 
     public function __construct($appreciationData)
     {
@@ -35,10 +34,7 @@ class ScriptAppreciation implements ShouldQueue
      */
     public function handle(): void
     {
-        try {
-            //$this->scriptService->generateValoration($this->appreciationData);
-        } catch (\Throwable $th) {
-            \Log::error($th->getMessage());
-        }
+        $scriptService = new ScriptService();
+        $scriptService->scrappingData($this->appreciationData);
     }
 }
