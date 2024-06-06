@@ -3,15 +3,17 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useForm } from "react-hook-form";
-import {uploadFile} from "../../services/file";
+import { uploadFile } from "../../services/file";
+import { useNavigate } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
 
 export default function UploadDialog(props) {
-    const { open, setOpen, appreciation } = props;
+    const { open, setOpen, appreciation, getAppreciationback } = props;
+    const navigate = useNavigate();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -26,10 +28,20 @@ export default function UploadDialog(props) {
         const formData = new FormData();
         formData.append('file', data.file[0]);
         formData.append('id', appreciation.id);
-        console.log(appreciation); 
         const res = await uploadFile(formData);
-        console.log(res);
         setOpen(false);
+        if(res.success === true){
+            enqueueSnackbar(res.message, {
+                variant: 'success'
+            });
+            getAppreciationback();
+        }
+        if(res.success === false){
+            enqueueSnackbar(res.message, {
+                variant: 'error'
+            });
+
+        }
     }
     return (
         <React.Fragment>

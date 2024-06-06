@@ -33,7 +33,7 @@ class AppreciationController extends Controller
         if($this->validateRut->validatorRut($request->rut)){
             return response()->json(['success' => false, 'message' => 'Rut incorrecto']);
         }
-        $data = [
+        $dataToReport = [
             'userLoggedId' => $request->user()->id,
             'newClient' => $request->newClient,
             'name' => $request->name,
@@ -53,9 +53,8 @@ class AppreciationController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ];
-        //dispatch(new GenerateReportAppreciation($data))->onQueue('high');
-        dispatch(new ScriptAppreciation($data))->onQueue('high');
         \Log::error('CREATING_APPRECIATION_WITH_JOB');
+        dispatch(new GenerateReportAppreciation($dataToReport))->onQueue('high');
         return response()->json([
             'success' => true,
             'message' => 'El sistema esta procesando la valoracion'

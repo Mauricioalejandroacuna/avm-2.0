@@ -506,7 +506,7 @@
         <?php if($count2 > 10){break;} ?>
         <tr>
             <td></td>
-            <td colspan="1" align="center">{{ $row['id_witness'] }}</td>
+            <td colspan="1" align="center">{{ $row['id'] }}</td>
             <td colspan="3">{{ $row['address'] }}</td>
             <td colspan="1" align="center">{{ $row['construction_area'] }}</td>
             <td colspan="1" align="center">{{ $row['terrain_area'] }}</td>

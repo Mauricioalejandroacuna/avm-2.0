@@ -21,15 +21,33 @@ class DBService
      */
     public function getValueWitnesses($latitude, $longitude, $distanceWitnesses, $lowerArea, $upperArea, $difAsset, $dateYearsLess, $currentDateValo, $appreciationData)
     {
+        \Log::error('latitude');
+        \Log::error($latitude);
+        \Log::error('longitude');
+        \Log::error($longitude);
+        \Log::error('distanceWitnesses');
+        \Log::error($distanceWitnesses);
+        \Log::error('lowerArea');
+        \Log::error($lowerArea);
+        \LOg::error('upperarea');
+        \Log::error($upperArea);
+        \Log::error('difasset');
+        \Log::error($difAsset);
+        \Log::error('dateyearsless');
+        \Log::error($dateYearsLess);
+        \Log::error('currentdatevalo');
+        \Log::error($currentDateValo);
+        \Log::error('communeid');
+        \Log::error($appreciationData);
+
         if ($appreciationData['bathroom'] == 0 || $appreciationData['bedroom'] == 0) {
-            $queryWitnesses = Witnesses::select('*', DB::RAW('
+            $queryWitnesses = Witnesses::select('*',  DB::RAW('
         (6371 * acos(cos(radians(' . $latitude . ')) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE)
         - radians(' . $longitude . ')) + sin(radians(' . $latitude . ')) * sin(radians(LATITUDE)))
         ) AS distancia'))
-                ->where('id_type_of_assets', $appreciationData['typeOfAsset'])
-                ->whereBetween('construction_area', [$lowerArea, $upperArea])
+                ->where('type_asset_id',$appreciationData['typeOfAsset'])
+                ->whereBetween('terrain_area', [$lowerArea, $upperArea])
                 ->whereBetween('publication_date', [$dateYearsLess, $currentDateValo])
-                ->where('commune_id', $appreciationData['communeId'])
                 ->having('distancia', '<', $distanceWitnesses)
                 ->get();
         } else {
@@ -38,14 +56,14 @@ class DBService
         - radians(' . $longitude . ')) + sin(radians(' . $latitude . ')) * sin(radians(LATITUDE)))
         ) AS distancia'))
                 ->where('type_asset_id', $appreciationData['typeOfAsset'])
-                ->whereBetween('construction_area', [$lowerArea, $upperArea])
+                ->whereBetween('terrain_area', [$lowerArea, $upperArea])
                 ->whereBetween('bathrooms', [$appreciationData['bathroom'] - $difAsset, $appreciationData['bathroom'] + $difAsset])
                 ->whereBetween('bedrooms', [$appreciationData['bedroom'] - $difAsset, $appreciationData['bedroom'] + $difAsset])
                 ->whereBetween('publication_date', [$dateYearsLess, $currentDateValo])
-                ->where('commune_id', $appreciationData['communeId'])
                 ->having('distancia', '<', $distanceWitnesses)
                 ->get();
         }
+        \Log::error($queryWitnesses);
         return $queryWitnesses;
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Services\ApiService;
 use App\Services\AppreciationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,6 +31,9 @@ class GenerateReportAppreciation implements ShouldQueue
     public function handle(): void
     {
         $appreciationService = new AppreciationService();
+        $apiService = new ApiService();
+        //$apiService->testApi($this->appreciationData);
         $appreciationService->createAppreciation($this->appreciationData);
+        \Log::error('END_WORK');
     }
 }

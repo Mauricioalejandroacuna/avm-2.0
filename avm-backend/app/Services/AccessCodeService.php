@@ -15,6 +15,10 @@ class AccessCodeService
     public function createAccessCode($clientId){
         try {
             $random = $this->random_string(6);
+            $oldAccessCode = AccessCode::where('client_id',$clientId)->first();
+            if($oldAccessCode){
+                $oldAccessCode->delete();
+            }
             $accessCode = new AccessCode();
             $accessCode->client_id = $clientId;
             $accessCode->code = Hash::make($random);

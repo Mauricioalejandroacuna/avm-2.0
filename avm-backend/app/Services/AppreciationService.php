@@ -4,6 +4,9 @@ namespace App\Services;
 use App\Models\Appreciation;
 use App\Models\File;
 use App\Models\User;
+use App\Models\Witnesses;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AppreciationService
 {
@@ -36,12 +39,11 @@ class AppreciationService
             return [ 'success' => false,  'error' => 'Error al obtener valoraciones de cliente' ];
         }
     }
-
     public function createAppreciation($data){
+        \Log::error('GENERATE APPRECIATION');
         $apiService = new ApiService();
         $calculateService = new CalculateService();
         $mailService = new MailService();
-
         try {
             if($data['newClient'] === true) {
                 $client = new User();
@@ -54,7 +56,6 @@ class AppreciationService
             } else {
                 $client = User::where('rut', $data['rut'])->first();
             }
-            // falta enviar el numero de direccion
             $resCalculateValoration = $calculateService->calculateAppreciation($data);
             $queryValoranet = $resCalculateValoration['query_valoranet'];
             $queryWitnesses = $resCalculateValoration['query_witnesses'];

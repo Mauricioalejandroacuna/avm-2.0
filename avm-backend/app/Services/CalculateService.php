@@ -54,7 +54,6 @@ class CalculateService
             }
         } while ($statusValueValoranet != 0 && count($queryReferences) <= 10 && $distanceValoranet < 8);
         $i = 1;
-        \Log::error('CALCULATE SERVICES VALORANET');
 
         foreach ($queryReferences as $row) {
             $promedioValoranet += (int)$row->VALOR_COMERCIAL_ENCARGO_SUPERVISADO_UF;
@@ -65,11 +64,6 @@ class CalculateService
         }
 
         $value_uf_valoranet = $promedioValoranet / ($i - 1);
-        \Log::error('QUALITY VALORANET');
-        \Log::error($qualityValoranet);
-        \Log::error($distanceValoranet);
-        \Log::error($value_uf_valoranet);
-
         return [
             'value_uf_valoranet' => $value_uf_valoranet,
             'query_reference_valoranet' => $queryReferences,
@@ -114,6 +108,7 @@ class CalculateService
         } while ($statusValueWitnesses != 0 && count($queryWitnesses) <= 10 && $distanceWitnesses <= 3);
 
         \Log::error('CALCULATE SERVICES WITNESSES');
+        \Log::error($queryWitnesses);
         $j = 1;
         foreach ($queryWitnesses as $row) {
             $promedioWitnesses += $row->value_uf;
@@ -128,11 +123,6 @@ class CalculateService
         } else {
             $qualityWitnesses = 1;
         }
-        \Log::error('CUALITI WITNESSES');
-        \Log::error($qualityWitnesses);
-        \Log::error($distanceWitnesses);
-        \Log::error($value_uf_reference);
-
         return [
             'value_uf_reference' => $value_uf_reference,
             'query_reference_witnesses' => $queryWitnesses,
@@ -159,8 +149,7 @@ class CalculateService
             }
         }
         $quality = ($qualityWitnesses + $qualityValoranet) / 2;
-        \Log::error('AVERAGE VALORANET WITNESSES');
-        \Log::error($quality);
+
         return $quality;
     }
 
@@ -172,8 +161,10 @@ class CalculateService
     public function calculateAppreciation($data){
             $resCalculateValoranet = $this->calculateValueValoranet($data);
             $resCalculateWitnesses = $this->calculateValueWitnesses($data);
+
             $queryValoranet = $resCalculateValoranet['query_reference_valoranet'];
             $queryWitnesses = $resCalculateWitnesses['query_reference_witnesses'];
+
             $value_uf_valoranet = $resCalculateValoranet['value_uf_valoranet'];
             $value_uf_reference = $resCalculateWitnesses['value_uf_reference'];
 
@@ -181,9 +172,6 @@ class CalculateService
             $qualityValoranet =  $resCalculateValoranet['quality_valoranet'];
             // calculate report value between reference and valoranet
             $resCalculateAverage = $this->calculateAverages($qualityValoranet, $qualityWitnesses, $data['bathroom'], $data['bedroom']);
-
-            \Log::error('AVERAGE APPRECIATION');
-            \Log::error($resCalculateAverage);
 
             if ($value_uf_valoranet == 0) {
                 $value_uf_valoranet = $value_uf_reference;
@@ -200,10 +188,7 @@ class CalculateService
                 return [ 'status' => 422, 'error' => 'No se pudo valorar esta propiedad, revise datos ingresados' ];
             }
             \Log::error('CALCULATE APPRECIATION END');
-            \Log::error($value_uf_reference);
-            \Log::error($value_uf_valoranet);
-            \Log::error($value_uf_report);
-            \Log::error($resCalculateAverage);
+            \Log::error($queryWitnesses);
             return [
                 'query_valoranet' => $queryValoranet,
                 'query_witnesses' => $queryWitnesses,

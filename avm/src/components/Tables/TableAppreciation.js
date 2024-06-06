@@ -299,7 +299,7 @@ export function TableAppreciation(){
                     />
                 </Paper>
             )}
-            <UploadDialog open={open} setOpen={setOpen} appreciation={appreciation}  />
+            <UploadDialog open={open} setOpen={setOpen} appreciation={appreciation} getAppreciationback={getAppreciationBack}  />
         </>
 
     )
