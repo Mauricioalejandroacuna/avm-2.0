@@ -3,7 +3,7 @@
 namespace App\Services;
 
 /**
- * In the calculate services, there are function
+ * Calculate services, there are function
  * to calculate data from APIS or DBs
  */
 
@@ -107,8 +107,6 @@ class CalculateService
             }
         } while ($statusValueWitnesses != 0 && count($queryWitnesses) <= 10 && $distanceWitnesses <= 3);
 
-        \Log::error('CALCULATE SERVICES WITNESSES');
-        \Log::error($queryWitnesses);
         $j = 1;
         foreach ($queryWitnesses as $row) {
             $promedioWitnesses += $row->value_uf;
@@ -131,7 +129,7 @@ class CalculateService
     }
 
     /**
-     * In calculate average function create
+     * Calculate average function create
      * average data valoranet and data witnesses
      */
     public function calculateAverages($qualityValoranet, $qualityWitnesses, $bathrooms, $bedrooms){
@@ -154,7 +152,7 @@ class CalculateService
     }
 
     /**
-     * In calculate appreciation function handle the
+     * Calculate appreciation function handle the
      * process to calculate appreciation in valoranet data and
      * witnesses data and then generate average
      */
@@ -187,8 +185,6 @@ class CalculateService
             if ($value_uf_report == 0 || $value_uf_report == null) {
                 return [ 'status' => 422, 'error' => 'No se pudo valorar esta propiedad, revise datos ingresados' ];
             }
-            \Log::error('CALCULATE APPRECIATION END');
-            \Log::error($queryWitnesses);
             return [
                 'query_valoranet' => $queryValoranet,
                 'query_witnesses' => $queryWitnesses,

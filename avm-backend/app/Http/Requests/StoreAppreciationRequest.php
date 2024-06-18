@@ -24,7 +24,7 @@ class StoreAppreciationRequest extends FormRequest
         return [
             'rut' => 'required',
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|unique:users,email',
             'phone' => 'required',
             'region' => 'required',
             'commune' => 'required',
@@ -51,6 +51,7 @@ class StoreAppreciationRequest extends FormRequest
             'rut.required' => 'El rut es requerido',
             'name.required' => 'El nombre es requerido',
             'email.required' => 'El email es requerido',
+            'email.unique' => 'El email ya esta ingresado',
             'phone.required' => 'El numero ceular es requerido',
             'region.required' => 'La region es requerida',
             'commune.required' => 'La comuna es requerida',
@@ -63,7 +64,6 @@ class StoreAppreciationRequest extends FormRequest
             'terrainConstruction.required' => 'El area construction es requerido',
             'bedroom.required' => 'Las habitaciones son requeridas',
             'bathroom.required' => 'Los banos son requesridos',
-
         ];
     }
 }

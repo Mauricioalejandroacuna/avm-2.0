@@ -84,6 +84,7 @@ class MailService
             $dataDecodeValoration = json_decode($queryValoranet, true);
             $dataDecodeWitnesses =  json_decode($queryWitnesses, true);
             $url_img_val = "https://maps.googleapis.com/maps/api/staticmap?center=" . $appreciation['latitude'] . "," . $appreciation['longitude'] . "&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7C" . $appreciation['latitude'] . "," . $appreciation['longitude'];
+
             $img5 = $url_img_val . self::img_map_valuaciones($url_img_val, (array)$dataDecodeValoration);
 
             Storage::disk('public')->put('mapa_valo.png', file_get_contents($img5));
@@ -143,10 +144,10 @@ class MailService
     public function img_map_valuaciones($url_img_val, $data)
     {
         foreach ($data as $row) {
-            $url_format = $url_img_val . "&markers=color:blue%7C" . $row['LATITUD'] . "," . $row['LONGITUD'];
+            $url_img_val = $url_img_val . "&markers=color:blue%7C" . $row['LATITUD'] . "," . $row['LONGITUD'];
         }
-        $url_format . "&key=AIzaSyBL1KI92Lt_nzwiO3FPbbAnaZpd-vuvNFk";
-        return $url_format . "&key=AIzaSyBL1KI92Lt_nzwiO3FPbbAnaZpd-vuvNFk";
+        $url_img_val . "&key=AIzaSyBL1KI92Lt_nzwiO3FPbbAnaZpd-vuvNFk";
+        return $url_img_val . "&key=AIzaSyBL1KI92Lt_nzwiO3FPbbAnaZpd-vuvNFk";
     }
 
     public function img_map_mercado($url_img_wit, $data)
@@ -160,13 +161,9 @@ class MailService
 
     public function sendInfoClient($appreciation, $details){
         $accessCodeService = new AccessCodeService();
-
         try{
             // generate access code
             $responseCodeService = $accessCodeService->createAccessCode($appreciation->client[0]->id);
-            \Log::error($appreciation->client[0]->name);
-            \Log::error($details['direccion']);
-            \Log::error($responseCodeService['access_code']);
             $detailsClient = [
                 'title' => 'Estimado/a ' . $appreciation->client[0]->name . '. A continuación se encuentran los datos para ingresar al sistema de tasación automatica(AVM), Si desea, ingrese al enlace incluido con su correo y código de acceso. Mas detalles en el informe adjunto en PDF',
                 'code' => ' ' . $responseCodeService['access_code'] . ' ',
@@ -180,7 +177,6 @@ class MailService
                 'bien' => $details['tipo_bien']
             ];
             Mail::to($appreciation->client[0]->email)->send(new CodeToClient($detailsClient));
-            \Log::error('MAIL CLIENT END');
             return true;
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());

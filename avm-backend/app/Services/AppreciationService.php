@@ -40,7 +40,8 @@ class AppreciationService
         }
     }
     public function createAppreciation($data){
-        \Log::error('GENERATE APPRECIATION');
+        \Log::error('GENERATE_REPORT_APPRECIATION');
+        \Log::error($data);
         $apiService = new ApiService();
         $calculateService = new CalculateService();
         $mailService = new MailService();
@@ -56,7 +57,10 @@ class AppreciationService
             } else {
                 $client = User::where('rut', $data['rut'])->first();
             }
-            $resCalculateValoration = $calculateService->calculateAppreciation($data);
+
+            $resCalculateValoration = $calculateService->calculateAppreciation($data); // Generate data appreciation
+            $uf = $apiService->getUf(); // Get uf
+
             $queryValoranet = $resCalculateValoration['query_valoranet'];
             $queryWitnesses = $resCalculateValoration['query_witnesses'];
             $appreciation = new Appreciation();
@@ -75,7 +79,6 @@ class AppreciationService
             $appreciation->latitude = $data['latitude'];
             $appreciation->longitude = $data['longitude'];
             $appreciation->status = true;
-            $uf = $apiService->getUf(); // get uf
             $value_uf_reference = $resCalculateValoration['value_uf_reference'];
             $value_uf_valoranet = $resCalculateValoration['value_uf_valoranet'];
             $value_uf_report = $resCalculateValoration['value_uf_valoranet'];
@@ -94,7 +97,6 @@ class AppreciationService
             $file->file_type_id = 2;
             $file->path = $path;
             $file->save();
-            \Log::error('SERVICES_APPRECIATION_END');
             return [ 'success' => true, 'message' => 'La valoracion esta siendo procesada' ];
         } catch (\Throwable $th) {
             \Log::error($th->getMessage());

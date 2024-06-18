@@ -21,25 +21,6 @@ class DBService
      */
     public function getValueWitnesses($latitude, $longitude, $distanceWitnesses, $lowerArea, $upperArea, $difAsset, $dateYearsLess, $currentDateValo, $appreciationData)
     {
-        \Log::error('latitude');
-        \Log::error($latitude);
-        \Log::error('longitude');
-        \Log::error($longitude);
-        \Log::error('distanceWitnesses');
-        \Log::error($distanceWitnesses);
-        \Log::error('lowerArea');
-        \Log::error($lowerArea);
-        \LOg::error('upperarea');
-        \Log::error($upperArea);
-        \Log::error('difasset');
-        \Log::error($difAsset);
-        \Log::error('dateyearsless');
-        \Log::error($dateYearsLess);
-        \Log::error('currentdatevalo');
-        \Log::error($currentDateValo);
-        \Log::error('communeid');
-        \Log::error($appreciationData);
-
         if ($appreciationData['bathroom'] == 0 || $appreciationData['bedroom'] == 0) {
             $queryWitnesses = Witnesses::select('*',  DB::RAW('
         (6371 * acos(cos(radians(' . $latitude . ')) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE)
