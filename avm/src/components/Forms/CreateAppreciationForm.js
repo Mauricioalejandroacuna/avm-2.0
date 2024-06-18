@@ -80,12 +80,24 @@ export function CreateAppreciationForm() {
                 variant: "error"
             });
         }
+        if(res.error?.email){ // Error form request validator backend
+            enqueueSnackbar(res.error?.email[0], {
+                variant: "error"
+            });
+        }
         //navigate('/appreciations');
         setIsLoading(false);
     }
     const handleEnterKey = async () => {
         setIsLoading(true)
         const res = await searchClient(getValues('rut'));
+        if(res.success === false){
+            setIsLoading(false);
+            enqueueSnackbar(res.message, {
+                variant: 'error',
+            })
+            return;
+        }
         if(res.error){
             setRutError('Rut incorrecto')
             await setIsLoading(false);
@@ -110,17 +122,24 @@ export function CreateAppreciationForm() {
             });
             return;
         }
+
         if(res.client.length === 0){
             enqueueSnackbar('No se encontro ningun cliente', {
                 variant: "warning"
             });
             setValue('newClient', true);
+            setValue('email', '');
+            setValue('name', '');
+            setValue('phone', '');
+
             setIsLoading(false);
             setIsDataRutSet(false);
             return;
         }
+
         if(res.success === true){
             setIsLoading(false);
+            setValue('newClient', false);
             setValue('name', res.client[0].name, { shouldTouch: true });
             setValue('email', res.client[0].email, { shouldTouch: true });
             setValue('phone', res.client[0].phone, { shouldTouch: true });
